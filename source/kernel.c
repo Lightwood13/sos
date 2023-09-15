@@ -24,6 +24,9 @@ _Noreturn void kernel_main(void) {
 
 void init(void) {
     init_gdt();
+
+    init_console();
+
     init_timer();
     init_idt();
 }

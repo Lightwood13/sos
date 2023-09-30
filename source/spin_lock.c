@@ -1,4 +1,5 @@
 #include "spin_lock.h"
+#include "idle.h"
 #include "interrupts/interrupts.h"
 
 void init_lock(lock* lock) { atomic_set(lock, 1); }
@@ -7,7 +8,7 @@ bool try_lock(lock* lock) { return atomic_exchange(lock, 0) == 1; }
 
 void spin_lock(lock* lock) {
     do {
-        __asm__("pause");
+        pause();
     } while (!try_lock(lock));
 }
 

@@ -1,5 +1,5 @@
 #include "gdt.h"
-#include "idt.h"
+#include "interrupts/idt.h"
 #include "types.h"
 #include "vga_print.h"
 #include "timer.h"

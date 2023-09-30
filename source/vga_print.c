@@ -13,9 +13,7 @@ u16 cur_col = 0;
 VGA_Color cur_foreground = WHITE;
 VGA_Color cur_background = BLACK;
 
-void init_console() {
-    init_lock(&console_lock);
-}
+void init_console() { init_lock(&console_lock); }
 
 __attribute__((no_caller_saved_registers)) void print_u32_unsafe(u32 x);
 __attribute__((no_caller_saved_registers)) void print_u32_hex_unsafe(u32 x);
@@ -26,49 +24,48 @@ __attribute__((no_caller_saved_registers)) void print_char_with_color_unsafe(
     u16 row, u16 col, char ch, VGA_Color foreground, VGA_Color background);
 __attribute__((no_caller_saved_registers)) void clear_screen_unsafe(void);
 
-
 __attribute__((no_caller_saved_registers)) void print_u32(u32 x) {
-    spin_lock_irq(&console_lock);
+    bool interrupts_enabled = spin_lock_irq_save(&console_lock);
     print_u32_unsafe(x);
-    spin_unlock_irq(&console_lock);
+    spin_unlock_irq_restore(&console_lock, interrupts_enabled);
 }
 
 __attribute__((no_caller_saved_registers)) void print_u32_hex(u32 x) {
-    spin_lock_irq(&console_lock);
+    bool interrupts_enabled = spin_lock_irq_save(&console_lock);
     print_u32_hex_unsafe(x);
-    spin_unlock_irq(&console_lock);
+    spin_unlock_irq_restore(&console_lock, interrupts_enabled);
 }
 
 __attribute__((no_caller_saved_registers)) void print_char(char ch) {
-    spin_lock_irq(&console_lock);
+    bool interrupts_enabled = spin_lock_irq_save(&console_lock);
     print_char_unsafe(ch);
-    spin_unlock_irq(&console_lock);
+    spin_unlock_irq_restore(&console_lock, interrupts_enabled);
 }
 
 __attribute__((no_caller_saved_registers)) void print(const char* str) {
-    spin_lock_irq(&console_lock);
+    bool interrupts_enabled = spin_lock_irq_save(&console_lock);
     print_unsafe(str);
-    spin_unlock_irq(&console_lock);
+    spin_unlock_irq_restore(&console_lock, interrupts_enabled);
 }
 
 __attribute__((no_caller_saved_registers)) void println(const char* str) {
-    spin_lock_irq(&console_lock);
+    bool interrupts_enabled = spin_lock_irq_save(&console_lock);
     println_unsafe(str);
-    spin_unlock_irq(&console_lock);
+    spin_unlock_irq_restore(&console_lock, interrupts_enabled);
 }
 
 __attribute__((no_caller_saved_registers)) void print_char_with_color(
     u16 row, u16 col, char ch, VGA_Color foreground, VGA_Color background) {
 
-    spin_lock_irq(&console_lock);
+    bool interrupts_enabled = spin_lock_irq_save(&console_lock);
     print_char_with_color_unsafe(row, col, ch, foreground, background);
-    spin_unlock_irq(&console_lock);
+    spin_unlock_irq_restore(&console_lock, interrupts_enabled);
 }
 
 __attribute__((no_caller_saved_registers)) void clear_screen(void) {
-    spin_lock_irq(&console_lock);
+    bool interrupts_enabled = spin_lock_irq_save(&console_lock);
     clear_screen_unsafe();
-    spin_unlock_irq(&console_lock);
+    spin_unlock_irq_restore(&console_lock, interrupts_enabled);
 }
 
 __attribute__((no_caller_saved_registers)) void new_line(void);
@@ -89,7 +86,8 @@ __attribute__((no_caller_saved_registers)) void print_unsafe(const char* str) {
     }
 }
 
-__attribute__((no_caller_saved_registers)) void println_unsafe(const char* str) {
+__attribute__((no_caller_saved_registers)) void println_unsafe(
+    const char* str) {
     print_unsafe(str);
     print_char_unsafe('\n');
 }
@@ -144,7 +142,8 @@ __attribute__((no_caller_saved_registers)) void print_u32_unsafe(u32 x) {
     }
 }
 
-char hex_chars[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+char hex_chars[16] = {'0', '1', '2', '3', '4', '5', '6', '7',
+                      '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 __attribute__((no_caller_saved_registers)) void print_u32_hex_unsafe(u32 x) {
     char digits[8];
     for (u8 i = 0; i < 8; i++) {

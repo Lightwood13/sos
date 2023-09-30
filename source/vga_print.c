@@ -14,7 +14,7 @@ VGA_Color cur_foreground = WHITE;
 VGA_Color cur_background = BLACK;
 
 void init_console() {
-    init_lock(console_lock);
+    init_lock(&console_lock);
 }
 
 __attribute__((no_caller_saved_registers)) void print_u32_unsafe(u32 x);
@@ -28,47 +28,47 @@ __attribute__((no_caller_saved_registers)) void clear_screen_unsafe(void);
 
 
 __attribute__((no_caller_saved_registers)) void print_u32(u32 x) {
-    spin_lock_irq(console_lock);
+    spin_lock_irq(&console_lock);
     print_u32_unsafe(x);
-    unlock_irq(console_lock);
+    spin_unlock_irq(&console_lock);
 }
 
 __attribute__((no_caller_saved_registers)) void print_u32_hex(u32 x) {
-    spin_lock_irq(console_lock);
+    spin_lock_irq(&console_lock);
     print_u32_hex_unsafe(x);
-    unlock_irq(console_lock);
+    spin_unlock_irq(&console_lock);
 }
 
 __attribute__((no_caller_saved_registers)) void print_char(char ch) {
-    spin_lock_irq(console_lock);
+    spin_lock_irq(&console_lock);
     print_char_unsafe(ch);
-    unlock_irq(console_lock);
+    spin_unlock_irq(&console_lock);
 }
 
 __attribute__((no_caller_saved_registers)) void print(const char* str) {
-    spin_lock_irq(console_lock);
+    spin_lock_irq(&console_lock);
     print_unsafe(str);
-    unlock_irq(console_lock);
+    spin_unlock_irq(&console_lock);
 }
 
 __attribute__((no_caller_saved_registers)) void println(const char* str) {
-    spin_lock_irq(console_lock);
+    spin_lock_irq(&console_lock);
     println_unsafe(str);
-    unlock_irq(console_lock);
+    spin_unlock_irq(&console_lock);
 }
 
 __attribute__((no_caller_saved_registers)) void print_char_with_color(
     u16 row, u16 col, char ch, VGA_Color foreground, VGA_Color background) {
 
-    spin_lock_irq(console_lock);
+    spin_lock_irq(&console_lock);
     print_char_with_color_unsafe(row, col, ch, foreground, background);
-    unlock_irq(console_lock);
+    spin_unlock_irq(&console_lock);
 }
 
 __attribute__((no_caller_saved_registers)) void clear_screen(void) {
-    spin_lock_irq(console_lock);
+    spin_lock_irq(&console_lock);
     clear_screen_unsafe();
-    unlock_irq(console_lock);
+    spin_unlock_irq(&console_lock);
 }
 
 __attribute__((no_caller_saved_registers)) void new_line(void);

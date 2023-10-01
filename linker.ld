@@ -23,5 +23,5 @@ SECTIONS
 
     .bss ALIGN (4K) : AT (ADDR (.bss) - KERNEL_OFFSET) { *(.bss) }
 
-    kernel_start = .;
+    kernel_end = .;
 }

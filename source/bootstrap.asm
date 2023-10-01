@@ -331,4 +331,16 @@ section .text
 extern kernel_main
 
 long_mode_start:
+    mov rsp, kernel_stack + KERNEL_STACK_SIZE
+
+    mov rax, qword upper_memory
+    jmp rax
+
+upper_memory:
+    mov qword rax, 0
+    mov [qword p4_table], rax
+
+    mov rax, cr3
+    mov cr3, rax
+
     jmp kernel_main
